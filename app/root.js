@@ -1,6 +1,8 @@
 import React from 'react';
 import Header from './components/header';
 import Progress from './components/progress';
+
+let duration = null;
 let Root = React.createClass({
     getInitialState (){
         //作用于组件的实例，在实例创建时调用一次，用于初始化每个实例的state，此时可以访问this.props。
@@ -20,10 +22,17 @@ let Root = React.createClass({
             wmode:'window',
         });
         $('#player').bind($.jPlayer.event.timeupdate,(e)=>{
+            duration = e.jPlayer.status.duration;
             this.setState({
-                progrees:Math.round(e.jPlayer.status.currentTime)
+                progrees:e.jPlayer.status.currentPercentAbsolute
             });
         })
+    },
+    componentWillUnMount(){
+        $('#player').unbind($.jPlayer.event.timeupdate);
+    },
+    progressChangeHandle(progrees){
+        $('#player').jPlayer('play',duration*progrees)
     },
     render(){
         return (
@@ -31,6 +40,7 @@ let Root = React.createClass({
                 <Header></Header>
                 <Progress 
                     progress={this.state.progrees}
+                    onProgressChange={this.progressChangeHandle}
                 >
                 </Progress>
             </div>
