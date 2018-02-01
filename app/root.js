@@ -1,13 +1,16 @@
 import React from 'react';
 import Header from './components/header';
 import Player from './page/player';
+import MusicList from './page/musiclist';
 import { MUSIC_LIST } from './config/musiclist';
+import { Router,IndexRoute,Link,Route,hashHistory } from 'react-router';
 
 
 let Root = React.createClass({
     getInitialState (){
         //作用于组件的实例，在实例创建时调用一次，用于初始化每个实例的state，此时可以访问this.props。
         return {
+            musicList:MUSIC_LIST,
             currentMusicItem:MUSIC_LIST[0]
         }
     },
@@ -30,10 +33,10 @@ let Root = React.createClass({
         return (
             <div>
                 <Header></Header>
-                <Player 
-                currentMusicItem={this.state.currentMusicItem}
-                >
-                </Player>
+                <MusicList 
+                    musicList={this.state.musicList}
+                    currentMusicItem={this.state.currentMusicItem}
+                ></MusicList>
             </div>
         )
     }
