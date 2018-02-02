@@ -1,6 +1,7 @@
 import React from 'react';
 import Progress from '../components/progress';
 import './player.less';
+import {Link} from 'react-router';
 
 let duration = null;
 let Player = React.createClass({
@@ -58,7 +59,7 @@ let Player = React.createClass({
     render(){
         return (
             <div className='player-page'>
-            <h1 className="caption">我的私人音乐坊 </h1>
+            <h1 className="caption"><Link to='/list'>我的私人音乐坊 </Link></h1>
             <div className="mt20 row">
                 <div className="controll-wrapper">
                     <h2 className="music-title">{this.props.currentMusicItem.title}</h2>

@@ -5,8 +5,7 @@ import MusicList from './page/musiclist';
 import { MUSIC_LIST } from './config/musiclist';
 import { Router,IndexRoute,Link,Route,hashHistory } from 'react-router';
 
-
-let Root = React.createClass({
+let App = React.createClass({
     getInitialState (){
         //作用于组件的实例，在实例创建时调用一次，用于初始化每个实例的state，此时可以访问this.props。
         return {
@@ -33,11 +32,21 @@ let Root = React.createClass({
         return (
             <div>
                 <Header></Header>
-                <MusicList 
-                    musicList={this.state.musicList}
-                    currentMusicItem={this.state.currentMusicItem}
-                ></MusicList>
+                {React.cloneElement(this.props.children,this.state)}
+                
             </div>
+        )
+    }
+});
+let Root = React.createClass({
+    render(){
+        return (
+            <Router history={hashHistory}>
+                 <Route path='/' component={App}>
+                     <IndexRoute component={Player}></IndexRoute>
+                     <Route path='/list' component={MusicList}></Route>
+                 </Route>
+            </Router>
         )
     }
 });
