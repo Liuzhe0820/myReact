@@ -2,6 +2,7 @@ import React from 'react';
 import Progress from '../components/progress';
 import './player.less';
 import {Link} from 'react-router';
+import  Pubsub from 'pubsub-js';//事件订阅管理器
 
 let duration = null;
 let Player = React.createClass({
@@ -10,8 +11,16 @@ let Player = React.createClass({
         return {
             progrees:0,
             volume:0,
-            isPlayer:false
+            isPlayer:true,
+            leftTime:''
         }
+    },
+    formatTime(time){
+        time= Math.floor(time);
+        let miniutes = Math.floor(time / 60);
+        let seconds = Math.floor(time % 60);
+        seconds=seconds<10?`0${seconds}`:seconds;
+        return `${miniutes}:${seconds}`;
     },
     componentDidMount(){
         //绑定  打开即自动播放
@@ -19,9 +28,11 @@ let Player = React.createClass({
             duration = e.jPlayer.status.duration;
             this.setState({
                 volume:e.jPlayer.options.volume*100,
-                progress:e.jPlayer.status.currentPercentAbsolute
+                progress:e.jPlayer.status.currentPercentAbsolute,
+                leftTime:this.formatTime(duration*(1-e.jPlayer.status.currentPercentAbsolute/100))
             });
         })
+       
     },
     componentWillUnMount(){
         //解绑
@@ -56,6 +67,20 @@ let Player = React.createClass({
             isPlayer:!this.state.isPlayer
         })
     },
+    playPrev(){
+        PubSub.publish('PLAY_PREV');
+        this.setState({
+            //状态取反
+            isPlayer:true
+        })
+    },
+    playNext(){
+        PubSub.publish('PLAY_NEXT');
+        this.setState({
+            //状态取反
+            isPlayer:true
+        })
+    },
     render(){
         return (
             <div className='player-page'>
@@ -65,7 +90,7 @@ let Player = React.createClass({
                     <h2 className="music-title">{this.props.currentMusicItem.title}</h2>
                     <h3 className="music-artist mt10">{this.props.currentMusicItem.artist}</h3>
                     <div className="row mt20">
-                        <div className="left-time -col-auto">-2:00</div>
+                        <div className="left-time -col-auto">{this.state.leftTime}</div>
                         <div className="volume-container">
                             <i className="icon-volume rt" style={{top: 5, left: -5}}></i>
                             <div className="volume-wrapper">
@@ -86,9 +111,9 @@ let Player = React.createClass({
                     </div>
                     <div className="mt35 row">
                         <div>
-                            <i className="icon prev"></i>
+                            <i className="icon prev" onClick={this.playPrev}></i>
                             <i className={`icon ml20 ${this.state.isPlayer?'pause':'play'}`} onClick={this.play}></i>
-                            <i className="icon next ml20"></i>
+                            <i className="icon next ml20" onClick={this.playNext}></i>
                         </div>
                         <div className="-col-auto">
                             <i className='icon repeat-cycle'></i>
